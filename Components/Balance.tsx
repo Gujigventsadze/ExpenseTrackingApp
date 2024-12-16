@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface BalanceProps {
   income: string;
@@ -8,7 +8,7 @@ interface BalanceProps {
 
 const Balance: React.FC<BalanceProps> = ({ income, expense, profit }) => {
   return (
-    <View style={styles.mainContainer}>
+    <Pressable style={styles.mainContainer}>
       <View style={styles.topContainer}>
         <View style={styles.infoBox}>
           <Text style={styles.profitText}>{income}</Text>
@@ -20,10 +20,17 @@ const Balance: React.FC<BalanceProps> = ({ income, expense, profit }) => {
         </View>
       </View>
       <View style={styles.infoBox}>
-        <Text style={styles.prText}>{profit}</Text>
+        <Text
+          style={[
+            styles.prText,
+            { color: Number(income) - Number(expense) >= 0 ? "green" : "red" },
+          ]}
+        >
+          {profit}
+        </Text>
         <Text style={styles.generalText}>Total Profit</Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -58,8 +65,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   prText: {
-    color: "blue",
     fontSize: 25,
     fontWeight: "bold",
+  },
+  pressedBox: {
+    opacity: 0.7,
   },
 });

@@ -5,8 +5,10 @@ import HomeScreen from "./Screens/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import store from "./Redux/store";
 import { Provider } from "react-redux";
+import ExpenseScreen from "./Screens/ExpenseScreen";
+import { RootStackParamList } from "./Types/NavigationTypes";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
@@ -27,6 +29,7 @@ export default function App() {
               title: "Expense Tracker",
             }}
           />
+          <Stack.Screen name="ExpenseScreen" component={ExpenseScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

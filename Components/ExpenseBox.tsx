@@ -1,5 +1,7 @@
 import { useLayoutEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../Types/NavigationTypes";
 
 interface ExpenseBoxProps {
   transactionType: string;
@@ -7,6 +9,7 @@ interface ExpenseBoxProps {
   amount: string;
   isIncome: boolean;
 }
+type NavigationProps = NavigationProp<RootStackParamList>;
 
 const ExpenseBox: React.FC<ExpenseBoxProps> = ({
   transactionType,
@@ -14,8 +17,25 @@ const ExpenseBox: React.FC<ExpenseBoxProps> = ({
   amount,
   isIncome,
 }) => {
+  const navigation = useNavigation<NavigationProps>();
+
+  const handlePress = () => {
+    navigation.navigate("ExpenseScreen", {
+      name: transactionType,
+      amount: amount,
+      date: date,
+      isIncome: isIncome,
+    });
+  };
+
   return (
-    <View style={styles.mainContainer}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.mainContainer,
+        pressed && styles.pressedBox,
+      ]}
+      onPress={handlePress}
+    >
       <View style={styles.topContainer}>
         <View>
           <Text style={styles.textContainer}>{transactionType}</Text>
@@ -36,7 +56,7 @@ const ExpenseBox: React.FC<ExpenseBoxProps> = ({
           { backgroundColor: isIncome ? "green" : "red" },
         ]}
       ></View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -73,5 +93,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 90,
     width: 10,
+  },
+  pressedBox: {
+    opacity: 0.7,
+    backgroundColor: "#d2d2d2",
   },
 });

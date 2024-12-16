@@ -12,12 +12,14 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import ExpenseBox from "../Components/ExpenseBox";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addTransaction, selectTransactions } from "../Redux/transactionSlice";
+import Balance from "../Components/Balance";
 
 interface HomeScreenProps {
   navigation: any;
@@ -36,6 +38,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [transactionName, setTransactionName] = useState<string>("");
   const [transactionAmount, setTransactionAmount] = useState<number>(0);
   const [error, setError] = useState<boolean>(false);
+
+  //Profit/Expense
+
+  const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
 
   const dispatch = useDispatch();
   const selector = useSelector(selectTransactions);
@@ -74,6 +81,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    const income = selector.reduce((acc, transaction) => {
+      return transaction.type === "income" ? acc + transaction.amount : acc;
+    }, 0);
+    const expense = selector.reduce((acc, transaction) => {
+      return transaction.type === "expense" ? acc + transaction.amount : acc;
+    }, 0);
+    setTotalIncome(income);
+    setTotalExpense(expense);
+  }, [selector]);
+
   const slideAnim = React.useRef(new Animated.Value(screenHeight)).current;
 
   const toggleModal = () => {
@@ -110,15 +128,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {selector.map((item, index) => (
-        <ExpenseBox
-          key={index}
-          transactionType={item.name}
-          amount={item.amount.toFixed(2)}
-          isIncome={item.type === "income"}
-          date={item.date}
-        />
-      ))}
+      <Balance
+        income={totalIncome.toFixed(2)}
+        expense={totalExpense.toFixed(2)}
+        profit={(totalIncome - totalExpense).toFixed(2)}
+      />
+      <ScrollView>
+        {[...selector].reverse().map((item, index) => (
+          <ExpenseBox
+            key={index}
+            transactionType={item.name}
+            amount={item.amount.toFixed(2)}
+            isIncome={item.type === "income"}
+            date={item.date}
+          />
+        ))}
+      </ScrollView>
       <Modal
         transparent
         visible={isModalVisible}

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 interface ExpenseBoxProps {
   transactionType: string;
   date: string;
-  amount: number;
+  amount: string;
   isIncome: boolean;
 }
 
